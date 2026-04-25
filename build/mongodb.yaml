@@ -1,39 +1,26 @@
 apiVersion: apps.kubeblocks.io/v1alpha1
 kind: Cluster
 metadata:
-  finalizers:
-    - cluster.kubeblocks.io/finalizer
-  labels:
-    kb.io/database: mongodb-8.0.4
-    app.kubernetes.io/instance: mongodb
-    helm.sh/chart: mongodb-cluster-0.9.1
   name: mongodb
 spec:
-  affinity:
-    podAntiAffinity: Preferred
-    tenancy: SharedNode
-    topologyKeys:
-      - kubernetes.io/hostname
+  clusterDefinitionRef: mongodb
+  clusterVersionRef: mongodb-5.0
+  terminationPolicy: Halt
   componentSpecs:
-    - componentDef: mongodb
-      monitor: true
-      name: mongodb
-      replicas: 1
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 1024Mi
-        requests:
-          cpu: 100m
-          memory: 102Mi
-      serviceAccountName: ""
-      serviceVersion: 8.0.4
-      volumeClaimTemplates:
-        - name: data
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: $CAPACITY
-  terminationPolicy: Delete
+  - name: mongodb
+    componentDefRef: mongodb
+    replicas: 1
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: "0.5"
+        memory: 512Mi
+    volumeClaimTemplates:
+    - name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi

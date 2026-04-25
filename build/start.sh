@@ -28,8 +28,9 @@ set -x
 sed "s/\$CAPACITY/${DB_PV_SIZE:-5Gi}/g" mongodb.yaml | kubectl apply -n ${NAMESPACE} -f -
 kubectl wait --for=condition=Ready --timeout=120s cluster.apps.kubeblocks.io/mongodb -n ${NAMESPACE}
 
-DB_USERNAME=$(kubectl get secret -n ${NAMESPACE} mongodb-mongodb-account-root -ojsonpath='{.data.username}' | base64 -d)
-DB_PASSWORD=$(kubectl get secret -n ${NAMESPACE} mongodb-mongodb-account-root -ojsonpath='{.data.password}' | base64 -d)
+DB_USERNAME=$(kubectl get secret -n ${NAMESPACE} mongodb-conn-credential -ojsonpath='{.data.username}' | base64 -d)
+DB_PASSWORD=$(kubectl get secret -n ${NAMESPACE} mongodb-conn-credential -ojsonpath='{.data.password}' | base64 -d)
+
 DB_HOST="mongodb-mongodb.${NAMESPACE}.svc"
 DB_PORT=27017
 DATABASE_URL="mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/sys_db?authSource=admin&replicaSet=mongodb-mongodb&w=majority"

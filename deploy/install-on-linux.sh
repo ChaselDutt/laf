@@ -4,6 +4,15 @@
 
 # TIP: use `sh -x install-on-linux.sh` to debug
 
+# 设置代理
+export http_proxy=http://192.168.1.254:7890
+export https_proxy=http://192.168.1.254:7890
+export HTTP_PROXY=http://192.168.1.254:7890
+export HTTPS_PROXY=http://192.168.1.254:7890
+export NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,sealos.hub,apiserver.cluster.local,.cluster.local,.nip.io
+export no_proxy=localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,sealos.hub,apiserver.cluster.local,.cluster.local,.nip.io
+
+
 # set the first param as domain
 DOMAIN="$1"
 # if domain is empty string, use default domain
@@ -52,6 +61,11 @@ fi
 
 set -e
 
+# 打包laf镜像
+cd ../build
+sealos build -t lafyun/laf:latest -f Kubefile .
+cd -
+
 # pull sealos cluster images
 sealos pull labring/kubernetes:v1.24.9
 sealos pull labring/flannel:v0.19.0
@@ -62,6 +76,9 @@ sealos pull labring/metrics-server:v0.6.2
 sealos pull lafyun/laf:latest
 sealos pull docker.io/labring/ingress-nginx:v1.8.1
 sealos pull labring/kubeblocks:v0.7.1
+
+# 取消代理
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 # install k8s cluster
 sealos run labring/kubernetes:v1.24.9 labring/flannel:v0.19.0 labring/helm:v3.8.2

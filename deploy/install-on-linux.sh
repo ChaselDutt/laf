@@ -67,15 +67,15 @@ if [ ! -x "$(command -v sealos)" ]; then
     exit 1
 fi
 
-echo "拉取仓库"
-if [ -d "laf" ]; then
-    echo "laf 目录已存在，跳过 clone"
+echo "拉取仓库到 /laf"
+if [ -d "/laf" ]; then
+    echo "/laf 目录已存在，跳过 clone"
 else
-    git clone https://github.com/ChaselDutt/laf.git
+    git clone https://github.com/ChaselDutt/laf.git /laf
 fi
 
 echo "构建 lafyun/laf:latest 镜像"
-cd laf/build
+cd /laf/build
 sealos build -t lafyun/laf:latest -f Kubefile .
 
 # pull sealos cluster images
@@ -120,15 +120,8 @@ echo "等待 K8s 集群就绪..."
 sleep 30
 kubectl wait --for=condition=ready node --all --timeout=300s 2>/dev/null || echo "继续执行..."
 
-# 回到 laf 根目录
-cd ../..
-
 echo "构建 runtime-node 镜像"
-if [ ! -d "runtimes/nodejs" ]; then
-    echo "错误: runtimes/nodejs 目录不存在"
-    exit 1
-fi
-cd runtimes/nodejs
+cd /laf/runtimes/nodejs
 
 if [ ! -f "Dockerfile" ]; then
     echo "错误: Dockerfile 不存在"

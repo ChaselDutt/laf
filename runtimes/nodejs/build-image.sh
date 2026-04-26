@@ -30,7 +30,7 @@ echo "开始构建镜像..."
 
 # 构建 main image（单架构，使用普通 docker build）
 echo "📦 构建 runtime-node:${VERSION}..."
-docker build -t ${REGISTRY}/lafyun/runtime-node:${VERSION} -f Dockerfile .
+docker build --network=host -t ${REGISTRY}/lafyun/runtime-node:${VERSION} -f Dockerfile .
 
 # 推送
 echo "📤 推送镜像..."

@@ -9,3 +9,6 @@
 | `web/` | 前端管理控制台，基于 React |  |
 | `build/` | laf镜像构建文件 | `sealos build -t lafyun/laf:latest -f Kubefile .`
 | `docs/` | 项目文档 |  |
+
+### Ubuntu一键部署（root）
+`curl -fsSL https://raw.githubusercontent.com/ChaselDutt/laf/main/deploy/install-on-linux.sh | sh`

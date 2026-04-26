@@ -1,0 +1,9 @@
+sealos save -o "/mnt/hgfs/Downloads/laf.tar" -m --format docker-archive localhost/lafyun/laf
+sealos save -o "/mnt/hgfs/Downloads/kubernetes.tar" -m --format docker-archive docker.io/labring/kubernetes:v1.24.9
+sealos save -o "/mnt/hgfs/Downloads/kubeblocks.tar" -m --format docker-archive docker.io/labring/kubeblocks:v0.7.1
+sealos save -o "/mnt/hgfs/Downloads/nginx.tar" -m --format docker-archive docker.io/labring/ingress-nginx:v1.8.1
+sealos save -o "/mnt/hgfs/Downloads/cert.tar" -m --format docker-archive docker.io/labring/cert-manager:v1.8.0
+sealos save -o "/mnt/hgfs/Downloads/metrics.tar" -m --format docker-archive docker.io/labring/metrics-server:v0.6.2 
+sealos save -o "/mnt/hgfs/Downloads/flannel.tar" -m --format docker-archive docker.io/labring/flannel:v0.19.0 
+sealos save -o "/mnt/hgfs/Downloads/helm.tar" -m --format docker-archive docker.io/labring/helm:v3.8.2
+sealos save -o "/mnt/hgfs/Downloads/openebs.tar" -m --format docker-archive docker.io/labring/openebs:v1.9.0

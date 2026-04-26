@@ -5,12 +5,11 @@
 echo "===== 镜像构建脚本 ====="
 
 # 1. 输入私有仓库地址（必填）
-read -p "请输入私有仓库地址（必填）：" REGISTRY
+read -p "请输入私有仓库地址（不输入默认 ttl.sh）：" REGISTRY
 
 # 判断仓库地址是否为空
 if [ -z "$REGISTRY" ]; then
-    echo "❌ 私有仓库地址不能为空，脚本退出！"
-    exit 1
+    REGISTRY="ttl.sh"
 fi
 
 # 2. 输入版本号（可选，默认 latest）

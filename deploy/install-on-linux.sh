@@ -206,10 +206,10 @@ sealos tag ttl.sh/lafyun/runtime-node-init:latest sealos.hub:5000/lafyun/runtime
 sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node-init:latest
 
 # 如果 crictl 可用，删除旧镜像
-if command -v crictl >/dev/null 2>&1; then
+# if command -v crictl >/dev/null 2>&1; then
     # echo "删除 sealos.hub:5000 里的旧镜像"
     # crictl rmi sealos.hub:5000/lafyun/runtime-node:latest || true
     # crictl rmi sealos.hub:5000/lafyun/runtime-node-init:latest || true
-fi
+# fi
 
 echo "部署完成！"

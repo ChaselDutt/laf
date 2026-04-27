@@ -31,8 +31,8 @@ if [ -n "$PROXYURL" ]; then
     export https_proxy=$PROXYURL
     export HTTP_PROXY=$PROXYURL
     export HTTPS_PROXY=$PROXYURL
-    export NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,sealos.hub,apiserver.cluster.local,.cluster.local,.nip.io
-    export no_proxy=localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,sealos.hub,apiserver.cluster.local,.cluster.local,.nip.io
+    export NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,*.svc,*.cluster.local,sealos.hub,apiserver.cluster.local,.cluster.local,.nip.io
+    export no_proxy=localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,*.svc,*.cluster.local,sealos.hub,apiserver.cluster.local,.cluster.local,.nip.io
     echo "代理已设置为: $PROXYURL"
 else
     echo "跳过代理设置"

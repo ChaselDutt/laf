@@ -4,6 +4,8 @@ set -e
 # Intro: start laf with sealos in linux
 # Usage: sh ./install-on-linux.sh
 
+printf "请输入node版本（默认24.15.0）: "
+read NODEVERSION
 
 printf "\n请选择镜像加速器（留空则不配置）：\n"
 printf "1)  道客镜像 (docker.m.daocloud.io)\n"
@@ -17,6 +19,12 @@ read PROXYURL
 
 printf "请输入绑定域名（默认127.0.0.1.nip.io）: "
 read DOMAIN
+
+# ====================设置node版本 ====================
+if [ -z "$DOMAIN" ]; then
+    NODEVERSION="24.15.0"
+fi
+
 # ==================== 设置代理 ====================
 if [ -n "$PROXYURL" ]; then
     case "$PROXYURL" in
@@ -169,6 +177,11 @@ if [ ! -f "Dockerfile" ]; then
     echo "错误: Dockerfile 不存在"
     exit 1
 fi
+
+echo "修改Dockerfile Dockerfile.init文件里node版本"
+NEW_VERSION="$DOMAIN"
+sed -i "s/FROM node:[0-9.]\+/FROM node:${NEW_VERSION}/g" /laf/runtimes/nodejs/Dockerfile
+sed -i "s/FROM node:[0-9.]\+/FROM node:${NEW_VERSION}/g" /laf/runtimes/nodejs/Dockerfile.init
 
 sealos build --network=host -t ttl.sh/lafyun/runtime-node:latest -f Dockerfile .
 sealos build -t ttl.sh/lafyun/runtime-node-init:latest -f Dockerfile.init .

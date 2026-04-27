@@ -91,7 +91,6 @@ sealos pull docker.io/labring/ingress-nginx:v1.8.1
 sealos pull labring/kubeblocks:v0.7.1
 
 echo "镜像拉取结束取消代理"
-unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 # install k8s cluster
 
@@ -163,5 +162,8 @@ if command -v crictl >/dev/null 2>&1; then
     crictl rmi sealos.hub:5000/lafyun/runtime-node:latest || true
     crictl rmi sealos.hub:5000/lafyun/runtime-node-init:latest || true
 fi
+
+echo "取消代理"
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 echo "部署完成！"

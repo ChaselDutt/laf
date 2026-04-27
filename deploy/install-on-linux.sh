@@ -11,7 +11,7 @@ printf "\n请选择镜像加速器（留空则不配置）：\n"
 printf "1)  道客镜像 (docker.m.daocloud.io)\n"
 printf "2)  轩辕镜像 (docker.xuanyuan.me)\n"
 printf "3)  毫秒镜像 (docker.1ms.run)\n"
-printf "请输入数字 (1-4，直接回车则不配置): "
+printf "请输入数字 (1-3，直接回车则不配置): "
 read ACCELERATOR_CHOICE
 
 printf "请输入代理地址（留空则不设置代理）: "

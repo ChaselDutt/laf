@@ -40,7 +40,7 @@ if [ -x "$(command -v apt)" ]; then
     apt install sealos=4.3.5 -y
     apt install jq -y
     apt install git -y
-    apt install podman -y
+    # apt install podman -y
     apt install skopeo -y
     sed -i "/update_etc_hosts/c \\ - ['update_etc_hosts', 'once-per-instance']" /etc/cloud/cloud.cfg && touch /var/lib/cloud/instance/sem/config_update_etc_hosts
 fi
@@ -127,10 +127,10 @@ if [ ! -f "Dockerfile" ]; then
     echo "错误: Dockerfile 不存在"
     exit 1
 fi
-podman build --network=host -t ttl.sh/lafyun/runtime-node:latest -f Dockerfile .
+sealos build --network=host -t ttl.sh/lafyun/runtime-node:latest -f Dockerfile .
 
 if [ -f "Dockerfile.init" ]; then
-    podman build -t ttl.sh/lafyun/runtime-node-init:latest -f Dockerfile.init .
+    sealos build -t ttl.sh/lafyun/runtime-node-init:latest -f Dockerfile.init .
 else
     echo "警告: Dockerfile.init 不存在，跳过构建"
 fi
@@ -146,15 +146,15 @@ EOF
 fi
 
 echo "登录私有仓库 sealos.hub:5000"
-podman login --tls-verify=false -u admin -p passw0rd sealos.hub:5000
+sealos login --tls-verify=false -u admin -p passw0rd sealos.hub:5000
 
 echo "推送镜像到 sealos.hub:5000"
-podman tag ttl.sh/lafyun/runtime-node:latest sealos.hub:5000/lafyun/runtime-node:latest
-podman push --tls-verify=false sealos.hub:5000/lafyun/runtime-node:latest
+sealos tag ttl.sh/lafyun/runtime-node:latest sealos.hub:5000/lafyun/runtime-node:latest
+sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node:latest
 
 if [ -f "Dockerfile.init" ]; then
-    podman tag ttl.sh/lafyun/runtime-node-init:latest sealos.hub:5000/lafyun/runtime-node-init:latest
-    podman push --tls-verify=false sealos.hub:5000/lafyun/runtime-node-init:latest
+    sealos tag ttl.sh/lafyun/runtime-node-init:latest sealos.hub:5000/lafyun/runtime-node-init:latest
+    sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node-init:latest
 fi
 
 # 如果 crictl 可用，删除旧镜像

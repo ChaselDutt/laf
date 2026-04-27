@@ -9,7 +9,6 @@ printf "\n请选择镜像加速器（留空则不配置）：\n"
 printf "1)  DaoCloud 加速器 (docker.m.daocloud.io)\n"
 printf "2)  轩辕镜像 (docker.xuanyuan.me)\n"
 printf "3)  毫秒镜像 (docker.1ms.run)\n"
-printf "4)  阿里云杭州公共仓库 (noohub.ru)\n"
 printf "请输入数字 (1-4，直接回车则不配置): "
 read ACCELERATOR_CHOICE
 
@@ -98,10 +97,6 @@ if [ -n "$ACCELERATOR_CHOICE" ]; then
         3)
             MIRROR_URL="docker.1ms.run"
             echo "已选择: 毫秒镜像"
-            ;;
-        4)
-            MIRROR_URL="noohub.ru"
-            echo "已选择: 阿里云杭州公共仓库"
             ;;
         *)
             echo "无效选择，跳过配置镜像加速器"
@@ -200,9 +195,9 @@ sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node-init:latest
 
 # 如果 crictl 可用，删除旧镜像
 if command -v crictl >/dev/null 2>&1; then
-    echo "删除 sealos.hub:5000 里的旧镜像"
-    crictl rmi sealos.hub:5000/lafyun/runtime-node:latest || true
-    crictl rmi sealos.hub:5000/lafyun/runtime-node-init:latest || true
+    # echo "删除 sealos.hub:5000 里的旧镜像"
+    # crictl rmi sealos.hub:5000/lafyun/runtime-node:latest || true
+    # crictl rmi sealos.hub:5000/lafyun/runtime-node-init:latest || true
 fi
 
 echo "部署完成！"

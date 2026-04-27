@@ -14,7 +14,3 @@
 
 ### 使用代理下载脚本
 `curl -x http://192.168.1.254:7890 -fsSL -o install-on-linux.sh https://raw.githubusercontent.com/ChaselDutt/laf/main/deploy/install-on-linux.sh && chmod +x install-on-linux.sh && ./install-on-linux.sh`
-
-### 执行脚本
-`./install-on-linux.sh`
-

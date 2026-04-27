@@ -11,4 +11,13 @@
 | `docs/` | 项目文档 |  |
 
 ### Ubuntu一键部署（root）
-`curl -fsSL https://raw.githubusercontent.com/ChaselDutt/laf/main/deploy/install-on-linux.sh | sh`
+
+### 下载脚本
+curl -x http://192.168.1.254:7890 -fsSL -o install-on-linux.sh https://raw.githubusercontent.com/ChaselDutt/laf/main/deploy/install-on-linux.sh
+
+### 添加执行权限
+chmod +x install-on-linux.sh
+
+### 执行脚本
+./install-on-linux.sh
+

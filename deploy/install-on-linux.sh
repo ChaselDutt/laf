@@ -4,9 +4,21 @@ set -e
 # Intro: start laf with sealos in linux
 # Usage: sh ./install-on-linux.sh
 
+
+printf "请选择镜像加速器（留空则不配置）："
+printf "1)  DaoCloud 加速器 (docker.m.daocloud.io)"
+printf "2)  轩辕镜像 (docker.xuanyuan.me)"
+printf "3)  毫秒镜像 (docker.1ms.run)"
+printf "4)  阿里云杭州公共仓库 (registry.cn-hangzhou.aliyuncs.com)"
+printf "5)  请输入数字 (1/2/3/4，直接回车则不配置)"
+read ACCELERATOR_CHOICE
+
 printf "请输入代理地址（留空则不设置代理）: "
 read PROXYURL
 
+printf "请输入绑定域名（默认127.0.0.1.nip.io）: "
+read DOMAIN
+# ==================== 设置代理 ====================
 if [ -n "$PROXYURL" ]; then
     case "$PROXYURL" in
         http://*|https://*)
@@ -25,14 +37,11 @@ if [ -n "$PROXYURL" ]; then
 else
     echo "跳过代理设置"
 fi
-
-printf "请输入绑定域名（默认127.0.0.1.nip.io）: "
-read DOMAIN
+# ====================绑定域名 ====================
 if [ -z "$DOMAIN" ]; then
     DOMAIN="127.0.0.1.nip.io"
 fi
-
-# Install Sealos
+# ==================== 安装 Sealos ====================
 if [ -x "$(command -v apt)" ]; then
     echo "deb [trusted=yes] https://apt.fury.io/labring/ /" | tee /etc/apt/sources.list.d/labring.list
     apt update
@@ -75,6 +84,48 @@ else
     git clone https://github.com/ChaselDutt/laf.git /laf
 fi
 
+# ==================== 设置镜像加速 ====================
+if [ -n "$ACCELERATOR_CHOICE" ]; then
+    case "$ACCELERATOR_CHOICE" in
+        1)
+            MIRROR_URL="docker.m.daocloud.io"
+            echo "已选择: DaoCloud 加速器"
+            ;;
+        2)
+            MIRROR_URL="docker.xuanyuan.me"
+            echo "已选择: 轩辕镜像"
+            ;;
+        3)
+            MIRROR_URL="docker.1ms.run"
+            echo "已选择: 毫秒镜像"
+            ;;
+        4)
+            MIRROR_URL="registry.cn-hangzhou.aliyuncs.com"
+            echo "已选择: 阿里云杭州公共仓库"
+            ;;
+        *)
+            echo "无效选择，跳过配置镜像加速器"
+            ;;
+    esac
+    
+    if [ -n "$MIRROR_URL" ]; then
+        mkdir -p /etc/containers
+        cat > /etc/containers/registries.conf << EOF
+unqualified-search-registries = ["docker.io"]
+
+[[registry]]
+prefix = "docker.io"
+location = "docker.io"
+
+[[registry.mirror]]
+location = "$MIRROR_URL"
+EOF
+        echo "镜像加速器已配置: $MIRROR_URL"
+    fi
+else
+    echo "跳过镜像加速器配置"
+fi
+
 echo "构建 lafyun/laf:latest 镜像"
 cd /laf/build
 sealos build -t lafyun/laf:latest -f Kubefile .
@@ -91,8 +142,8 @@ sealos pull labring/metrics-server:v0.6.2
 sealos pull docker.io/labring/ingress-nginx:v1.8.1
 sealos pull labring/kubeblocks:v0.7.1
 
-echo "镜像拉取结束取消代理"
-unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+# echo "镜像拉取结束取消代理"
+# unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 # install k8s cluster
 

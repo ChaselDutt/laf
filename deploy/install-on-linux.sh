@@ -21,7 +21,7 @@ printf "请输入绑定域名（默认127.0.0.1.nip.io）: "
 read DOMAIN
 
 # ====================设置node版本 ====================
-if [ -z "$DOMAIN" ]; then
+if [ -z "$NODEVERSION" ]; then
     NODEVERSION="24.15.0"
 fi
 
@@ -71,7 +71,7 @@ gpgcheck=0
 EOF
     yum clean all
     yum install -y bind-utils iptables
-    yum install sealos=4.3.7 -y
+    yum install sealos=4.3.5 -y
     yum install jq -y
     yum install git -y
 fi
@@ -179,9 +179,8 @@ if [ ! -f "Dockerfile" ]; then
 fi
 
 echo "修改Dockerfile Dockerfile.init文件里node版本"
-NEW_VERSION="$DOMAIN"
-sed -i "s/FROM node:[0-9.]\+/FROM node:${NEW_VERSION}/g" /laf/runtimes/nodejs/Dockerfile
-sed -i "s/FROM node:[0-9.]\+/FROM node:${NEW_VERSION}/g" /laf/runtimes/nodejs/Dockerfile.init
+sed -i "s/FROM node:[0-9.]\+/FROM node:${NODEVERSION}/g" /laf/runtimes/nodejs/Dockerfile
+sed -i "s/FROM node:[0-9.]\+/FROM node:${NODEVERSION}/g" /laf/runtimes/nodejs/Dockerfile.init
 
 sealos build --network=host -t ttl.sh/lafyun/runtime-node:latest -f Dockerfile .
 sealos build -t ttl.sh/lafyun/runtime-node-init:latest -f Dockerfile.init .

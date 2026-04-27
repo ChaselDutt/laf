@@ -57,6 +57,7 @@ EOF
     yum install -y bind-utils iptables
     yum install sealos=4.3.7 -y
     yum install jq -y
+    yum install git -y
 fi
 
 ARCH=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/)
@@ -86,11 +87,12 @@ sealos pull labring/helm:v3.8.2
 sealos pull labring/openebs:v1.9.0
 sealos pull labring/cert-manager:v1.8.0
 sealos pull labring/metrics-server:v0.6.2
-sealos pull lafyun/laf:latest
+# sealos pull lafyun/laf:latest 改成使用自构建镜像
 sealos pull docker.io/labring/ingress-nginx:v1.8.1
 sealos pull labring/kubeblocks:v0.7.1
 
 echo "镜像拉取结束取消代理"
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 # install k8s cluster
 
@@ -114,11 +116,6 @@ sealos run labring/kubeblocks:v0.7.1
 echo "开始部署laf"
 sealos run --env DOMAIN=$DOMAIN --env DB_PV_SIZE=5Gi --env OSS_PV_SIZE=5Gi --env EXTERNAL_HTTP_SCHEMA=http lafyun/laf:latest
 
-# 等待集群就绪
-echo "等待 K8s 集群就绪..."
-sleep 30
-kubectl wait --for=condition=ready node --all --timeout=300s 2>/dev/null || echo "继续执行..."
-
 echo "构建 runtime-node 镜像"
 cd /laf/runtimes/nodejs
 
@@ -126,13 +123,9 @@ if [ ! -f "Dockerfile" ]; then
     echo "错误: Dockerfile 不存在"
     exit 1
 fi
-sealos build --network=host -t ttl.sh/lafyun/runtime-node:latest -f Dockerfile .
 
-if [ -f "Dockerfile.init" ]; then
-    sealos build -t ttl.sh/lafyun/runtime-node-init:latest -f Dockerfile.init .
-else
-    echo "警告: Dockerfile.init 不存在，跳过构建"
-fi
+sealos build --network=host -t ttl.sh/lafyun/runtime-node:latest -f Dockerfile .
+sealos build -t ttl.sh/lafyun/runtime-node-init:latest -f Dockerfile.init .
 
 # 配置 insecure 仓库（如果需要）
 if ! grep -q "sealos.hub:5000" /etc/containers/registries.conf 2>/dev/null; then
@@ -151,10 +144,8 @@ echo "推送镜像到 sealos.hub:5000"
 sealos tag ttl.sh/lafyun/runtime-node:latest sealos.hub:5000/lafyun/runtime-node:latest
 sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node:latest
 
-if [ -f "Dockerfile.init" ]; then
-    sealos tag ttl.sh/lafyun/runtime-node-init:latest sealos.hub:5000/lafyun/runtime-node-init:latest
-    sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node-init:latest
-fi
+sealos tag ttl.sh/lafyun/runtime-node-init:latest sealos.hub:5000/lafyun/runtime-node-init:latest
+sealos push --tls-verify=false sealos.hub:5000/lafyun/runtime-node-init:latest
 
 # 如果 crictl 可用，删除旧镜像
 if command -v crictl >/dev/null 2>&1; then
@@ -162,8 +153,5 @@ if command -v crictl >/dev/null 2>&1; then
     crictl rmi sealos.hub:5000/lafyun/runtime-node:latest || true
     crictl rmi sealos.hub:5000/lafyun/runtime-node-init:latest || true
 fi
-
-echo "取消代理"
-unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 echo "部署完成！"

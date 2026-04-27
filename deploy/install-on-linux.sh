@@ -41,7 +41,7 @@ if [ -x "$(command -v apt)" ]; then
     apt install jq -y
     apt install git -y
     # apt install podman -y
-    apt install skopeo -y
+    # apt install skopeo -y
     sed -i "/update_etc_hosts/c \\ - ['update_etc_hosts', 'once-per-instance']" /etc/cloud/cloud.cfg && touch /var/lib/cloud/instance/sem/config_update_etc_hosts
 fi
 
